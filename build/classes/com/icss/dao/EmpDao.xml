@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icss.dao.EmpDao">
+	<!--为dao接口方法提供sql语句配置 -->
+	<!-- 登录 -->
+	<select id="login" resultType="int" parameterType="com.icss.vo.EmpLoginVO">
+		select count(1) from ae_h_employee where userid=#{userid} and password=#{password}
+	</select>
+	<!-- 添加员工 -->
+	<insert id="addUser" parameterType="com.icss.vo.EmpVO">
+		insert into
+		AE_H_EMPLOYEE(USERID,NAME,SEX,IDENTITY_CARD,Entry_date,TERMINATION_DATE,onwership_place,wages,email,password,dept_id)values(#{userid},#{name},#{sex},#{identity_card},#{entry_date},#{termination_date},#{onwership_place},#{wages},#{email},#{password},#{dept_id})
+	</insert>
+	<!-- 查询员工 -->
+	<select id="queryById" resultType="int" parameterType="com.icss.vo.EmpVO">
+		select count(1) from ae_h_employee where userid=#{userid}
+	</select>
+	<!-- 查询所有员工 -->
+	<select id="queryAllById" resultType="com.icss.vo.EmpVO"
+		parameterType="com.icss.vo.EmpVO">
+		select userid,name,sex,identity_card,entry_date,onwership_place,termination_date,wages,email,dept_id from ae_h_employee where userid=#{userid}
+	</select>
+		<!-- 修改员工 -->
+	<update id="updateUser" parameterType="com.icss.vo.EmpVO">
+	  update ae_h_employee set name = #{name},sex = #{sex},identity_card = #{identity_card},entry_date = #{entry_date},termination_date =#{termination_date},onwership_place = #{onwership_place},
+	                wages =#{wages},email =#{email},dept_id=#{dept_id} where userid=#{userid}
+	</update>
+	<!-- 删除员工 -->
+	<delete id="deleteUser" parameterType="com.icss.vo.EmpVO">
+		delete from ae_h_employee where userid=#{userid}
+	</delete>
+	<!-- 查询员工列表 -->
+	<select id="query" resultType="com.icss.vo.EmpVO"
+		parameterType="com.icss.vo.EmpVO">
+		select userid,name,sex,identity_card,entry_date,
+		onwership_place,termination_date,wages,email,t.name4,t.name3,t.name2,t.name1 from(select f.userid, f.name, f.sex, f.identity_card, f.entry_date,
+		f.termination_date, f.onwership_place, f.wages, f.email,g.name4,g.name3, g.name2,g.name1 from ae_h_employee f join (select e.dept_id,e.dept_name
+		name4,a.name3,a.name2,a.name1 FROM ae_h_department e LEFT JOIN (select c.dept_id, c.dept_name name3,a.name2,a.name1 from ae_h_department c left join (select a.dept_id,a.dept_name
+		name2,b.dept_name name1 FROM ae_h_department a LEFT JOIN ae_h_department b on a.parent_id = b.dept_id ) a on c.parent_id = a.dept_id) a on
+		e.parent_id = a.dept_id)g ON g.dept_id = f.dept_id) t 
+		where 1=1
+		<if test="userid != null and userid != ''">  
+                and userid like '%${userid}%'  
+            </if>  
+             <if test="name != null and name != ''">  
+                AND name like '%${name}%' 
+            </if> 
+            <if test="identity_card != null and identity_card != ''">  
+                AND identity_card like '%${identity_card}%'  
+            </if>  
+              <if test="onwership_place != null and onwership_place != ''">  
+                AND onwership_place like '%${onwership_place}%'   
+            </if> 
+             <if test="sex != null and sex != ''" >
+			 and sex = #{sex}
+		   </if>
+		  </select>
+	<!-- 分页查询员工 -->	  
+	<select id="queryAll" resultType="com.icss.vo.EmpVO"
+		parameterType="com.icss.vo.EmpVO">
+		select userid,name,sex,identity_card,entry_date,
+		onwership_place,termination_date,wages,email,t.name4,t.name3,t.name2,t.name1 from(select f.userid, f.name, f.sex, f.identity_card, f.entry_date,
+		f.termination_date, f.onwership_place, f.wages, f.email,g.name4,g.name3, g.name2,g.name1 from ae_h_employee f join (select e.dept_id,e.dept_name
+		name4,a.name3,a.name2,a.name1 FROM ae_h_department e LEFT JOIN (select c.dept_id, c.dept_name name3,a.name2,a.name1 from ae_h_department c left join (select a.dept_id,a.dept_name
+		name2,b.dept_name name1 FROM ae_h_department a LEFT JOIN ae_h_department b on a.parent_id = b.dept_id ) a on c.parent_id = a.dept_id) a on
+		e.parent_id = a.dept_id)g ON g.dept_id = f.dept_id) t 
+		where 1=1
+		<if test="userid != null and userid != ''">  
+                and userid like '%${userid}%'  
+            </if>  
+             <if test="name != null and name != ''">  
+                AND name like '%${name}%' 
+            </if> 
+            <if test="identity_card != null and identity_card != ''">  
+                AND identity_card like '%${identity_card}%'  
+            </if>  
+              <if test="onwership_place != null and onwership_place != ''">  
+                AND onwership_place like '%${onwership_place}%'   
+            </if> 
+             <if test="sex != null and sex != ''" >
+			 and sex = #{sex}
+		   </if>
+		    ORDER BY userid limit #{limit},10
+		  </select>
+   <!-- 查询符合查询条件的员工总数 -->
+	    <select id="countEmpTotal" parameterType="com.icss.vo.EmpVO"
+		resultType="int">
+		SELECT COUNT(1)
+		from AE_H_EMPLOYEE WHERE 1=1
+		<if test="userid != null and userid != ''">  
+                and userid like '%${userid}%'  
+            </if>  
+             <if test="name != null and name != ''">  
+                AND name like '%${name}%' 
+            </if> 
+            <if test="identity_card != null and identity_card != ''">  
+                AND identity_card like '%${identity_card}%'  
+            </if>  
+              <if test="onwership_place != null and onwership_place != ''">  
+                AND onwership_place like '%${onwership_place}%'   
+            </if> 
+             <if test="sex != null and sex != ''" >
+			 and sex = #{sex}
+		   </if>
+	</select>
+	<!-- 生成地域报表 -->
+	<select id="classify" resultType="com.icss.vo.EmpPlaceVO">
+		select onwership_place selection, (select COUNT(1) FROM ae_h_employee AS t1
+		WHERE t1.sex=1 AND t1.onwership_place=t2.`onwership_place`)
+		man,(select COUNT(1) FROM ae_h_employee AS t1 WHERE t1.sex=0 AND
+		t1.onwership_place=t2.`onwership_place`) woman FROM ae_h_employee t2
+		GROUP BY t2.onwership_place
+	</select>
+	<!-- 查询部门列表 -->
+	<select id="queryDept" resultType="com.icss.vo.EmpDeptVO"
+		parameterType="com.icss.vo.EmpDeptVO">
+		select e.dept_id,e.dept_name,a.name3 parent_name,e.dept_level, e.dept_name
+		name4,a.name3,a.name2,a.name1 FROM ae_h_department e
+		LEFT JOIN ( select c.dept_id,c.dept_name name3,a.name2,a.name1 FROM
+		ae_h_department c LEFT JOIN ( select a.dept_id,a.dept_name name2,
+		b.dept_name name1 FROM ae_h_department a LEFT JOIN ae_h_department b
+		ON a.parent_id = b.dept_id) a ON c.parent_id = a.dept_id) a ON
+		e.parent_id = a.dept_id  
+		where 1=1 
+		<if test="dept_id != null and dept_id != ''">  
+                and e.dept_id like '%${dept_id}%'  
+            </if>  
+              <if test="dept_name != null and dept_name != ''">  
+                and e.dept_name like '%${dept_name}%' 
+            </if> 
+            <if test="dept_level != null and dept_level != ''" >
+			 and e.dept_level = #{dept_level}
+		  </if>  
+         </select>
+         <!-- 查询部门 -->
+   		<select id="selectDept" resultType="com.icss.vo.DeptVO"
+		parameterType="com.icss.vo.DeptVO">
+		select e.dept_id dept_id,e.dept_name name,a.name3 parent_name,e.dept_level
+		dept_level, a.dept_id parent_id, e.dept_name
+		name4,a.name3,a.name2,a.name1 FROM ae_h_department e LEFT JOIN ( SELECT c.dept_id, c.dept_name
+		name3,a.name2,a.name1 FROM ae_h_department c LEFT JOIN ( SELECT
+		a.dept_id,a.dept_name name2,
+		b.dept_name name1 FROM ae_h_department a LEFT JOIN ae_h_department b ON
+		a.parent_id = b.dept_id) a ON c.parent_id = a.dept_id) a ON
+		e.parent_id = a.dept_id
+		where e.dept_id =#{dept_id}
+	</select>
+	<!-- 修改部门 -->
+	<update id="updateDept" parameterType="com.icss.vo.EmpDeptVO">
+	  update ae_h_department set dept_name = #{dept_name},dept_level = #{dept_level},parent_id = #{parent_id} where dept_id=#{dept_id}
+	</update>
+	<!-- 按id查询部门-->
+	<select id="queryDeptById" resultType="com.icss.vo.DeptVO"
+		parameterType="com.icss.vo.DeptVO">
+		select a.dept_id dept_id,a.dept_name name,a.dept_level,b.dept_id parent_id,b.dept_name parent_name FROM	ae_h_department a LEFT JOIN ae_h_department b ON a.parent_id = b.dept_id
+	</select>
+	<!-- 查询所有地域-->
+	<select id="queryAllPlace" resultType="com.icss.vo.Place">
+	  select distinct onwership_place as place from ae_h_employee
+	</select>
+	<!--查询所有部门id -->
+		<select id="queryAlldeptId" resultType="com.icss.vo.Dept_id" parameterType="com.icss.vo.Dept_id">
+	   select distinct dept_id  from ae_h_department 	 </select>
+	<select id="queryAllparentId" resultType="com.icss.vo.Dept_id" parameterType="com.icss.vo.Dept_id">
+	   select distinct dept_id as parent_id from ae_h_department where ae_h_department.dept_level &lt;= 3 
+	 </select>
+	 <!--查询所有部门名称 -->
+	 <select id="queryParentName" resultType="com.icss.vo.Dept_id" parameterType="com.icss.vo.Dept_id">
+	  select dept_name as parent_name,dept_level from ae_h_department where dept_id=#{dept_id}
+	  </select>
+	  <!--增加部门-->
+	  <insert id="addDept" parameterType="com.icss.vo.EmpDeptVO">
+		insert into	ae_h_department(dept_id,dept_name,parent_id,dept_level)values(#{dept_id},#{dept_name},#{parent_id},#{dept_level})
+	</insert>
+	<!--校验部门id -->
+	<select id="queryByDept" resultType="int" parameterType="com.icss.vo.EmpDeptVO">
+		select count(1) from ae_h_department where dept_id=#{dept_id}
+	</select>
+	<!--校验部门名字 -->
+	<select id="queryDeptByName" resultType="int" parameterType="com.icss.vo.EmpDeptVO">
+		select count(1) from ae_h_department where dept_name=#{dept_name} and parent_id=#{parent_id}
+	</select>
+	<select id="queryByDeptName" resultType="int" parameterType="com.icss.vo.EmpDeptVO">
+		select count(1) from ae_h_department where dept_name=#{dept_name} and parent_id=#{parent_id} 
+
+	</select>
+	<!--校验部门级别 -->
+	<select id="queryByDeptlevel" resultType="int" parameterType="com.icss.vo.EmpDeptVO">
+     select count(1) from ae_h_department where parent_id=#{dept_id}
+	</select>
+	<!--查询所有部门级别 -->
+	<select id="queryDeptlevel" resultType="com.icss.vo.EmpDeptVO" parameterType="com.icss.vo.EmpDeptVO">
+     select dept_level from ae_h_department where dept_id=#{dept_id}
+	</select>
+	<!--修改密码-->
+	<update id="changePassword" parameterType="com.icss.vo.EmpLoginVO">
+     update ae_h_employee set password=#{newPassword} where userid=#{userid}
+	</update>
+	
+</mapper>
